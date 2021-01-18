@@ -8,16 +8,16 @@ from tensorflow.keras.metrics import Accuracy, AUC, Precision, Recall, Specifici
 from pandas import DataFrame as df
 
 datagen = preproc.image.ImageDataGenerator(
-    validation_split=.2,
+    validation_split=.18,
     rescale=1./255,
-    brightness_range=[25.5, 75.5],
-    shear_range=0.3,
+    brightness_range=[25.5, 65.5],
+    #shear_range=0.3,
     zoom_range=0.2,
-    horizontal_flip=True,
+    #horizontal_flip=True,
 )
 
 train = datagen.flow_from_directory(
-    directory="data/plot_epi/",
+    directory="data/plot_epi/train/",
     class_mode="categorical",
     color_mode="rgb",
     target_size=(299, 299),
@@ -27,12 +27,12 @@ train = datagen.flow_from_directory(
     subset="training",
 )
 
-test = datagen.flow_from_directory(
-    directory="data/plot_epi/",
+val = datagen.flow_from_directory(
+    directory="data/plot_epi/train/",
     class_mode="categorical",
     color_mode="rgb",
     target_size=(299, 299),
-    shuffle=True,
+    shuffle=False,
     interpolation="bilinear",
     seed=42,
     subset="validation",
@@ -57,7 +57,7 @@ callbacks = [
 ]
 
 epi_InceptionResNetV2_model_result = epi_InceptionResNetV2_model.fit(
-    x=train, validation_data=test, epochs=30, callbacks=callbacks)
+    x=train, validation_data=val, epochs=30, callbacks=callbacks)
 
 epi_InceptionResNetV2_model.save("model/augment_l1_epi_InceptionResNetV2_model.h5")
 epi_InceptionResNetV2_model.save_weights("model/augment_l1_epi_InceptionResNetV2_weights.h5")
